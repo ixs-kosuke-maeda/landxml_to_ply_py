@@ -29,6 +29,7 @@ class LandXML(Mesh):
         tree = ET.parse(self.file_name)
 
         # Get all points
+        id_to_index = {}
         for point in tree.findall(".//landxml:P", ns):
             point_data = point.text.split()
             self.points.append(
@@ -39,15 +40,16 @@ class LandXML(Mesh):
                     float(point_data[2]),
                 )
             )
+            id_to_index[point.attrib["id"]] = len(self.points) - 1
 
         # Get all faces
         for face in tree.findall(".//landxml:F", ns):
             face_data = face.text.split()
             self.faces.append(
                 (
-                    int(face_data[0]),
-                    int(face_data[1]),
-                    int(face_data[2]),
+                    int(id_to_index[face_data[0]]),
+                    int(id_to_index[face_data[1]]),
+                    int(id_to_index[face_data[2]]),
                 )
             )
 
